@@ -1,7 +1,12 @@
+body{
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
 
+}
   /* Container */
 .container {
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
   height: 100vh;
   /* max-width: 900px; */
@@ -102,7 +107,7 @@
 
 .list-card {
   background: #fff;
-  width: 100%;
+  width: fit-content;
   padding: 15px;
   border-radius: 6px;
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
