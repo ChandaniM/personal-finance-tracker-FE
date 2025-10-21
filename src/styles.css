@@ -1,0 +1,190 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+  
+  h1 {
+    text-align: center;
+  }
+  
+  .form-card, .list-card {
+    background: #fff;
+    padding: 16px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  
+  label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  input, select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .btn {
+    background: #e5e7eb;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .btn.primary {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .btn.small {
+    padding: 5px 8px;
+  }
+  
+  .btn.danger {
+    background: #dc2626;
+    color: white;
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .tx-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .tx-table th, .tx-table td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .plus { color: green; }
+  .minus { color: red; }
+  .muted { color: #6b7280; }
+  /* Container */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Form card */
+.form-card {
+  background: #f7f7f7;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.form-card .row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.form-card label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 150px;
+  font-size: 14px;
+}
+
+.form-card input, .form-card select {
+  padding: 6px 8px;
+  margin-top: 4px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Buttons */
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.btn.primary {
+  background: #28a745;
+}
+
+.btn.danger {
+  background: #dc3545;
+}
+
+.btn.small {
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+/* Table */
+.tx-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tx-table th, .tx-table td {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.tx-table th {
+  background: #f0f0f0;
+}
+
+.plus {
+  color: green;
+  font-weight: bold;
+}
+
+.minus {
+  color: red;
+  font-weight: bold;
+}
+
+/* Action buttons wrapper */
+.actions {
+  margin-bottom: 10px;
+}
+
+.muted {
+  color: #888;
+}
+
+.list-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
