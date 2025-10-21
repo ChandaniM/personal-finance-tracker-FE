@@ -43,7 +43,7 @@ const App: React.FC = () => {
       };
   
       const imported: Transaction[] = json.map(row => {
-        const dateString = parseExcelDate(row["Date"]);
+        const dateString = row["Date"] ? String(row["Date"]) : "";
         const withdrawal = Number(row["Withdrawal Amt."]) || 0;
         const deposit = Number(row["Deposit Amt."]) || 0;
   

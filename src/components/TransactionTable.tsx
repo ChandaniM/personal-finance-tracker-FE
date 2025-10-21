@@ -12,16 +12,16 @@ const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDe
 
   const handleDownloadCSV = () => {
     if (!transactions.length) return;
-    const headers = ["Date","Description","Type","Amount","Tags"];
+    const headers = ["Date", "Description", "Type", "Amount", "Tags"];
     const rows = transactions.map(t => [t.date, t.description ?? "", t.type, t.amount, t.tags ?? ""].join(","));
     const csvContent = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="transactions.csv"; a.click();
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "transactions.csv"; a.click();
   };
 
   const handleDownloadJSON = () => {
-    const blob = new Blob([JSON.stringify(transactions,null,2)], { type:"application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="transactions.json"; a.click();
+    const blob = new Blob([JSON.stringify(transactions, null, 2)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "transactions.json"; a.click();
   };
 
   const handleChange = (id: number, field: keyof Transaction, value: string | number) => {
@@ -30,7 +30,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDe
     );
   };
 
-  const total = transactions.reduce((sum, t) => t.type==="income"?sum+t.amount:sum-t.amount,0);
+  const total = transactions.reduce((sum, t) => t.type === "income" ? sum + t.amount : sum - t.amount, 0);
 
   return (
     <div className="list-card">
@@ -40,7 +40,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDe
         <button className="btn" onClick={handleDownloadJSON}>Download JSON</button>
       </div>
 
-      {transactions.length===0 ? <p className="muted">No transactions</p> :
+      {transactions.length === 0 ? <p className="muted">No transactions</p> :
         <table className="tx-table">
           <thead>
             <tr>
@@ -50,42 +50,67 @@ const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDe
           <tbody>
             {transactions.map(tx => (
               <tr key={tx.id}>
+<td>
+  {isEditing ? (
+    <input
+      type="date"
+      value={
+        // Convert DD/MM/YY -> yyyy-mm-dd
+        tx.date
+          ? (() => {
+              const parts = tx.date.split("/");
+              if (parts.length === 3) {
+                let [day, month, year] = parts;
+                if (year.length === 2) year = "20" + year; // convert 25 -> 2025
+                return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+              }
+              return "";
+            })()
+          : ""
+      }
+      onChange={e => {
+        // Convert yyyy-mm-dd back to DD/MM/YY
+        const [year, month, day] = e.target.value.split("-");
+        handleChange(tx.id, "date", `${day}/${month}/${year.slice(2)}`);
+      }}
+    />
+  ) : (
+    tx.date // display as DD/MM/YY
+  )}
+</td>
+
+
                 <td>
-                  {isEditing ? 
-                    <input type="date" value={tx.date} onChange={e=>handleChange(tx.id,"date",e.target.value)} /> 
-                    : tx.date}
-                </td>
-                <td>
-                  {isEditing ? 
-                    <input type="text" value={tx.description ?? ""} onChange={e=>handleChange(tx.id,"description",e.target.value)} /> 
+                  {isEditing ?
+                    <input type="text" value={tx.description ?? ""} onChange={e => handleChange(tx.id, "description", e.target.value)} />
                     : tx.description}
                 </td>
                 <td>
-                  {isEditing ? 
-                    <select value={tx.type} onChange={e=>handleChange(tx.id,"type",e.target.value as "income"|"expense")}>
+                  {isEditing ?
+                    <select value={tx.type} onChange={e => handleChange(tx.id, "type", e.target.value as "income" | "expense")}>
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
-                    </select> 
+                    </select>
                     : tx.type}
                 </td>
                 <td>
-                  {isEditing ? 
-                    <input type="number" value={tx.amount} onChange={e=>handleChange(tx.id,"amount",parseFloat(e.target.value)||0)} /> 
+                  {isEditing ?
+                    <input type="number" value={tx.amount} onChange={e => handleChange(tx.id, "amount", parseFloat(e.target.value) || 0)} />
                     : `₹${tx.amount.toFixed(2)}`}
                 </td>
                 <td>
-                  {isEditing ? 
-                    <input type="text" value={tx.tags ?? ""} onChange={e=>handleChange(tx.id,"tags",e.target.value)} /> 
+                  {isEditing ?
+                    <input type="text" value={tx.tags ?? ""} onChange={e => handleChange(tx.id, "tags", e.target.value)} />
                     : tx.tags}
                 </td>
                 <td>
-                  {isEditing && <button className="btn small danger" onClick={()=>onDelete(tx.id)}>Delete</button>}
+                  {isEditing && <button className="btn small danger" onClick={() => onDelete(tx.id)}>Delete</button>}
                 </td>
               </tr>
             ))}
             <tr>
-              <td colSpan={3} style={{textAlign:"right", fontWeight:"bold"}}>Total:</td>
-              <td style={{fontWeight:"bold"}}>₹{total.toFixed(2)}</td>
+              <td colSpan={3} style={{ textAlign: "right", fontWeight: "bold" }}>Total:</td>
+              <td style={{ fontWeight: "bold" }}>₹{total.toFixed(2)}</td>
               <td colSpan={2}></td>
             </tr>
           </tbody>
