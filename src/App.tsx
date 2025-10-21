@@ -8,31 +8,42 @@ import './styles.css';
 
 const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isEditing, setIsEditing] = useState(false); // toggle edit mode
 
   const addTransaction = (tx: Omit<Transaction,"id">) => {
-    setTransactions(prev=>[...prev,{...tx,id:Date.now()}]);
+    setTransactions(prev => [...prev, { ...tx, id: Date.now() }]);
   };
 
   const deleteTransaction = (id: number) => {
-    setTransactions(prev=>prev.filter(t=>t.id!==id));
+    setTransactions(prev => prev.filter(t => t.id !== id));
   };
 
   const handleUploadExcel = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const reader = new FileReader();
     reader.onload = (evt) => {
       const data = new Uint8Array(evt.target?.result as ArrayBuffer);
       const workbook = XLSX.read(data, { type: "array" });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const json: any[] = XLSX.utils.sheet_to_json(sheet);
+
+      const parseExcelDate = (value: any) => {
+        let date: Date;
+        if (!value) {
+          date = new Date(); // fallback
+        } else if (typeof value === "number") {
+          date = new Date((value - 25569) * 86400 * 1000);
+        } else {
+          date = new Date(value);
+        }
+        if (isNaN(date.getTime())) date = new Date();
+        return date.toISOString().slice(0, 10);
+      };
   
       const imported: Transaction[] = json.map(row => {
-        const dateValue = row["Date"];
-        const dateString = dateValue
-          ? (dateValue instanceof Date ? dateValue.toISOString().slice(0,10) : new Date(dateValue).toISOString().slice(0,10))
-          : new Date().toISOString().slice(0,10);
-  
+        const dateString = parseExcelDate(row["Date"]);
         const withdrawal = Number(row["Withdrawal Amt."]) || 0;
         const deposit = Number(row["Deposit Amt."]) || 0;
   
@@ -48,18 +59,30 @@ const App: React.FC = () => {
   
       setTransactions(prev => [...prev, ...imported]);
     };
+  
     reader.readAsArrayBuffer(file);
   };
-  
 
   return (
     <div className="container">
       <h1>💰 Personal Finance Tracker</h1>
       <TransactionForm onAdd={addTransaction} />
-      <div style={{marginTop:20}}>
+      <div style={{ marginTop: 20 }}>
         <input type="file" accept=".xlsx,.xls" onChange={handleUploadExcel} />
       </div>
-      <TransactionTable transactions={transactions} setTransactions={setTransactions} onDelete={deleteTransaction} />
+
+      <div style={{ marginTop: 20 }}>
+        <button className="btn primary" onClick={() => setIsEditing(!isEditing)}>
+          {isEditing ? "Save" : "Edit"}
+        </button>
+      </div>
+
+      <TransactionTable
+        transactions={transactions}
+        setTransactions={setTransactions}
+        onDelete={deleteTransaction}
+        isEditing={isEditing} // pass edit mode
+      />
     </div>
   );
 };

@@ -5,10 +5,11 @@ interface Props {
   transactions: Transaction[];
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
   onDelete: (id: number) => void;
+  isEditing: boolean; // new prop
 }
 
-const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDelete }) => {
-  // Download CSV
+const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDelete, isEditing }) => {
+
   const handleDownloadCSV = () => {
     if (!transactions.length) return;
     const headers = ["Date","Description","Type","Amount","Tags"];
@@ -18,13 +19,11 @@ const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDe
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="transactions.csv"; a.click();
   };
 
-  // Download JSON
   const handleDownloadJSON = () => {
     const blob = new Blob([JSON.stringify(transactions,null,2)], { type:"application/json" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download="transactions.json"; a.click();
   };
 
-  // Inline edit handler
   const handleChange = (id: number, field: keyof Transaction, value: string | number) => {
     setTransactions(prev =>
       prev.map(tx => tx.id === id ? { ...tx, [field]: value } : tx)
@@ -51,17 +50,37 @@ const TransactionTable: React.FC<Props> = ({ transactions, setTransactions, onDe
           <tbody>
             {transactions.map(tx => (
               <tr key={tx.id}>
-                <td><input type="date" value={tx.date} onChange={e=>handleChange(tx.id,"date",e.target.value)} /></td>
-                <td><input type="text" value={tx.description ?? ""} onChange={e=>handleChange(tx.id,"description",e.target.value)} /></td>
                 <td>
-                  <select value={tx.type} onChange={e=>handleChange(tx.id,"type",e.target.value as "income"|"expense")}>
-                    <option value="expense">Expense</option>
-                    <option value="income">Income</option>
-                  </select>
+                  {isEditing ? 
+                    <input type="date" value={tx.date} onChange={e=>handleChange(tx.id,"date",e.target.value)} /> 
+                    : tx.date}
                 </td>
-                <td><input type="number" value={tx.amount} onChange={e=>handleChange(tx.id,"amount",parseFloat(e.target.value)||0)} /></td>
-                <td><input type="text" value={tx.tags ?? ""} onChange={e=>handleChange(tx.id,"tags",e.target.value)} /></td>
-                <td><button className="btn small danger" onClick={()=>onDelete(tx.id)}>Delete</button></td>
+                <td>
+                  {isEditing ? 
+                    <input type="text" value={tx.description ?? ""} onChange={e=>handleChange(tx.id,"description",e.target.value)} /> 
+                    : tx.description}
+                </td>
+                <td>
+                  {isEditing ? 
+                    <select value={tx.type} onChange={e=>handleChange(tx.id,"type",e.target.value as "income"|"expense")}>
+                      <option value="expense">Expense</option>
+                      <option value="income">Income</option>
+                    </select> 
+                    : tx.type}
+                </td>
+                <td>
+                  {isEditing ? 
+                    <input type="number" value={tx.amount} onChange={e=>handleChange(tx.id,"amount",parseFloat(e.target.value)||0)} /> 
+                    : `₹${tx.amount.toFixed(2)}`}
+                </td>
+                <td>
+                  {isEditing ? 
+                    <input type="text" value={tx.tags ?? ""} onChange={e=>handleChange(tx.id,"tags",e.target.value)} /> 
+                    : tx.tags}
+                </td>
+                <td>
+                  {isEditing && <button className="btn small danger" onClick={()=>onDelete(tx.id)}>Delete</button>}
+                </td>
               </tr>
             ))}
             <tr>
